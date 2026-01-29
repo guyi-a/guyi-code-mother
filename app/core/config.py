@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from pydantic_settings import BaseSettings
 
 
@@ -32,6 +34,36 @@ class Settings(BaseSettings):
     
     # 日志配置
     LOG_LEVEL: str = "INFO"
+    
+    # LLM 配置
+    DASHSCOPE_API_KEY: str = ""
+    LLM_BASE_URL: str = ""
+    LLM_MODEL: str = ""
+    
+    # 工作区配置
+    WORKSPACE_BASE_PATH: str = ""  # workspace_path 的前缀路径，完整路径为: WORKSPACE_BASE_PATH/user_id_app_id_app_name
+    
+    def get_workspace_path(self, user_id: str, app_id: str, app_name: str) -> str:
+        """
+        构建完整的工作区路径
+        
+        Args:
+            user_id: 用户ID
+            app_id: 应用ID
+            app_name: 应用名称
+            
+        Returns:
+            完整的工作区路径: WORKSPACE_BASE_PATH/user_id_app_id_app_name
+        """
+        if not self.WORKSPACE_BASE_PATH:
+            raise ValueError("WORKSPACE_BASE_PATH 未配置")
+        
+        # 将三个属性用下划线连接作为目录名
+        workspace_dir_name = f"{user_id}_{app_id}_{app_name}"
+        
+        # 构建完整路径，使用 os.path.join 确保跨平台兼容
+        full_path = os.path.join(self.WORKSPACE_BASE_PATH, workspace_dir_name)
+        return os.path.normpath(full_path)
     
     class Config:
         env_file = ".env"
