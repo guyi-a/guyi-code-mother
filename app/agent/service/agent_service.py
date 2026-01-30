@@ -5,11 +5,12 @@ Agent服务 - 使用LangChain create_agent封装大模型Agent
 import logging
 from typing import List, Dict, Optional, AsyncIterator, Any
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage, BaseMessage
+from app.agent.service.base_agent_service import BaseAgentService
 
 logger = logging.getLogger(__name__)
 
 
-class AgentService:
+class AgentService(BaseAgentService):
     """Agent服务类 - 封装LangChain Agent调用"""
     
     def __init__(

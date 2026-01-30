@@ -40,6 +40,17 @@ class Settings(BaseSettings):
     LLM_BASE_URL: str = ""
     LLM_MODEL: str = ""
     
+    # Claude SDK 配置
+    CLAUDE_API_KEY: str = ""  # Claude API Key
+    CLAUDE_API_BASE_URL: str = ""  # Claude API Base URL（可选，默认使用官方）
+    CLAUDE_MODEL: str = "claude-3-5-sonnet-20241022"  # Claude 模型名称
+    CLAUDE_PLUGINS_DIR: str = "/opt/claude-plugins"  # Claude 插件目录（可选）
+    CLAUDE_MAX_TURNS: int = 2000  # Claude Agent 最大轮次
+    CLAUDE_PERMISSION_MODE: str = "acceptEdits"  # Claude 权限模式：acceptEdits, requireApproval
+    
+    # Agent 类型配置
+    DEFAULT_AGENT_TYPE: str = "langchain"  # 默认 Agent 类型：langchain 或 claude
+    
     # 工作区配置
     WORKSPACE_BASE_PATH: str = ""  # workspace_path 的前缀路径，完整路径为: WORKSPACE_BASE_PATH/user_id_app_id_app_name
     

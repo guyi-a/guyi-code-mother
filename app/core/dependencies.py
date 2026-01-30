@@ -104,3 +104,18 @@ def check_owner_or_admin(user_id: int, current_user: User) -> None:
     if current_user.id != user_id and current_user.userRole != "admin":
         raise ForbiddenException("只能修改自己的信息或需要管理员权限")
 
+
+def check_app_owner_or_admin(app_user_id: int, current_user: User) -> None:
+    """
+    检查是否是应用所有者或管理员
+    用于修改应用信息或管理员操作他人应用的场景
+    
+    Args:
+        app_user_id: 应用的所有者用户ID
+        current_user: 当前用户对象
+        
+    Raises:
+        ForbiddenException: 既不是应用所有者也不是管理员
+    """
+    if current_user.id != app_user_id and current_user.userRole != "admin":
+        raise ForbiddenException("只能修改自己的应用或需要管理员权限")

@@ -8,6 +8,8 @@ from app.core.exception import setup_exception_handlers
 from app.db.database import init_db, close_db
 from app.api.auth import router as auth_router
 from app.api.user import router as user_router
+from app.api.agent import router as agent_router
+from app.api.app import router as app_router
 # 导入模型，确保 SQLAlchemy 能识别并创建表
 from app.models import User  # noqa: F401
 
@@ -65,6 +67,8 @@ setup_exception_handlers(app)
 # 注册路由
 app.include_router(auth_router, prefix=settings.API_V1_PREFIX)
 app.include_router(user_router, prefix=settings.API_V1_PREFIX)
+app.include_router(agent_router, prefix=settings.API_V1_PREFIX)
+app.include_router(app_router, prefix=settings.API_V1_PREFIX)
 
 
 @app.get("/")

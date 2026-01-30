@@ -358,6 +358,73 @@ class MemoryStore:
             "message_count": len(messages)
         }
     
+    def _get_session_key(self, user_id: str, app_id: str) -> str:
+        """生成会话ID的Redis键（Claude SDK 特有）"""
+        return f"session:{user_id}:{app_id}"
+    
+    async def save_session_id(self, user_id: str, app_id: str, session_id: str):
+        """
+        保存 Claude SDK 会话ID（Claude SDK 特有）
+        
+        Args:
+            user_id: 用户ID
+            app_id: 应用ID
+            session_id: Claude SDK 会话ID
+        """
+        if not self.redis_client:
+            logger.warning("Redis未连接，无法保存会话ID")
+            return
+        
+        try:
+            key = self._get_session_key(user_id, app_id)
+            self.redis_client.set(key, session_id)
+            logger.debug(f"会话ID已保存: {user_id}:{app_id} -> {session_id}")
+        except Exception as e:
+            logger.error(f"保存会话ID失败: {user_id}:{app_id}, {e}")
+    
+    async def get_session_id(self, user_id: str, app_id: str) -> Optional[str]:
+        """
+        获取 Claude SDK 会话ID（Claude SDK 特有）
+        
+        Args:
+            user_id: 用户ID
+            app_id: 应用ID
+            
+        Returns:
+            会话ID，如果不存在则返回 None
+        """
+        if not self.redis_client:
+            logger.warning("Redis未连接，无法获取会话ID")
+            return None
+        
+        try:
+            key = self._get_session_key(user_id, app_id)
+            session_id = self.redis_client.get(key)
+            if session_id:
+                logger.debug(f"已获取会话ID: {user_id}:{app_id} -> {session_id}")
+            return session_id
+        except Exception as e:
+            logger.error(f"获取会话ID失败: {user_id}:{app_id}, {e}")
+            return None
+    
+    async def delete_session_id(self, user_id: str, app_id: str):
+        """
+        删除 Claude SDK 会话ID（Claude SDK 特有）
+        
+        Args:
+            user_id: 用户ID
+            app_id: 应用ID
+        """
+        if not self.redis_client:
+            return
+        
+        try:
+            key = self._get_session_key(user_id, app_id)
+            self.redis_client.delete(key)
+            logger.info(f"会话ID已删除: {user_id}:{app_id}")
+        except Exception as e:
+            logger.error(f"删除会话ID失败: {user_id}:{app_id}, {e}")
+    
     def is_available(self) -> bool:
         """检查Redis是否可用"""
         return self.redis_client is not None
